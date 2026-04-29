@@ -69,7 +69,7 @@ setup_test_environment() {
 }
 
 #####################################################
-# TODO SECTIONS - IMPLEMENT THESE
+# SECTIONS - IMPLEMENT THESE
 #####################################################
 
 find_world_writable() {
@@ -77,7 +77,7 @@ find_world_writable() {
 
     local count=0
 
-    # TODO 1: Find all world-writable files and directories
+    # 1: Find all world-writable files and directories
     #
     # Instructions:
     # 1. Use 'find' to search $TEST_DIR for items with world-write permission
@@ -112,8 +112,21 @@ find_world_writable() {
     #
     #     ((count++))
     # done < <(find "$TEST_DIR" -perm -002)
+    
+    while IFS= read -r item; do
+         perms=$(stat -c "%a" "$item")
+    
+         if [ -f "$item" ]; then
+             echo -e "${RED}[FILE]${NC} $item ($perms)"
+         elif [ -d "$item" ]; then
+             echo -e "${RED}[DIR] ${NC} $item ($perms)"
+         fi
+    
+         ((count++))
+    done < <(find "$TEST_DIR" -perm -002)
+    
 
-    # YOUR CODE HERE
+	
 
 
     echo ""
@@ -127,7 +140,7 @@ find_executable_non_scripts() {
 
     local count=0
 
-    # TODO 2: Find files that shouldn't be executable
+    # Find files that shouldn't be executable
     #
     # Instructions:
     # 1. Use 'find' to locate .html, .css, .txt, and .conf files that are executable
@@ -158,6 +171,11 @@ find_executable_non_scripts() {
     # done < <(find "$TEST_DIR" -type f \( -name "*.html" -o -name "*.css" -o -name "*.txt" -o -name "*.conf" \) -perm /111)
 
     # YOUR CODE HERE
+     while IFS= read -r file; do
+         perms=$(stat -c "%a" "$file")
+         echo -e "${YELLOW}[EXEC]${NC} $file ($perms)"
+         ((count++))
+    done < <(find "$TEST_DIR" -type f \( -name "*.html" -o -name "*.css" -o -name "*.txt" -o -name "*.conf" \) -perm /111)
 
 
     echo ""
